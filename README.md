@@ -12,3 +12,7 @@ conda activate .conda
 ```bash
 conda install --file requirements.txt
 ```
+
+# Dataset analysis and decision records
+
+Refer to the [analysis.ipynb](research_classifier/analysis/analysis.ipynb) notebook for dataset analysis conducted, helpful visualizations, alternative approaches considered and decision chosen.
