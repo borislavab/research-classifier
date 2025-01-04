@@ -6,6 +6,7 @@ from transformers import AutoTokenizer
 
 class AbstractProcessor(ABC):
 
+    # TODO: support batch processing
     @abstractmethod
     def process(self, abstract: str) -> str:
         pass

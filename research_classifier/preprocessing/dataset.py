@@ -206,6 +206,11 @@ def extract_categories(dataset: Dataset) -> List[str]:
     return sorted(all_categories)
 
 
+def extract_labels(categories: str) -> List[int]:
+    sample_categories = set(categories.split(" "))
+    return [1 if label in sample_categories else 0 for label in LABELS]
+
+
 if __name__ == "__main__":
     path = download()
     dataset = load(path)
