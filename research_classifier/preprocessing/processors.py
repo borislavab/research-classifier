@@ -27,11 +27,17 @@ class StopWordRemover(AbstractProcessor):
         )
 
 
-class DefaultTokenizer(AbstractProcessor):
+class AbstractTokenizer(ABC):
+    @abstractmethod
+    def tokenize(self, abstract: str):
+        pass
+
+
+class DefaultTokenizer(AbstractTokenizer):
     def __init__(self):
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-cased", is_fast=True)
 
-    def process(self, abstract: str) -> str:
+    def tokenize(self, abstract: str):
         # do not pad at this stage to max length,
         # instead use dynamic padding to max sequence length in batch
         # when batching with data collator

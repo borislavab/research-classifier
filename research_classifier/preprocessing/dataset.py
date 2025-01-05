@@ -183,9 +183,6 @@ LABELS = [
     "supr-con",
 ]
 
-id2label = {idx: label for idx, label in enumerate(LABELS)}
-label2id = {label: idx for idx, label in enumerate(LABELS)}
-
 
 def download():
     path = kagglehub.dataset_download("Cornell-University/arxiv")
@@ -193,9 +190,13 @@ def download():
     return os.path.join(path, "arxiv-metadata-oai-snapshot.json")
 
 
-def load(dataset_path: str) -> Dataset:
+def load(dataset_path: str = None, head: int = None) -> Dataset:
+    if not dataset_path:
+        dataset_path = download()
     dataset = load_dataset("json", data_files=dataset_path, split="train")
     dataset = dataset.select_columns(["title", "categories", "abstract"])
+    if head:
+        return dataset.select(range(head))
     return dataset
 
 
@@ -208,7 +209,7 @@ def extract_categories(dataset: Dataset) -> List[str]:
 
 def extract_labels(categories: str) -> List[int]:
     sample_categories = set(categories.split(" "))
-    return [1 if label in sample_categories else 0 for label in LABELS]
+    return [1.0 if label in sample_categories else 0.0 for label in LABELS]
 
 
 if __name__ == "__main__":
@@ -216,5 +217,3 @@ if __name__ == "__main__":
     dataset = load(path)
     LABELS = extract_categories(dataset)
     print(LABELS)
-    print(id2label)
-    print(label2id)
