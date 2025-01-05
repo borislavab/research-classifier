@@ -25,14 +25,6 @@ def split_dataset(dataset: Dataset):
     return dataset.train_test_split(test_size=0.01, shuffle=True, seed=42)
 
 
-def undersample(dataset: Dataset):
-    pass
-
-
-def oversample_smote(dataset: Dataset):
-    pass
-
-
 def load_for_training(dataset_path: str = None) -> Tuple[Dataset, Dataset]:
     dataset = load(dataset_path)
     processed = preprocess(dataset)
