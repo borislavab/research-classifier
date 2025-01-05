@@ -31,8 +31,8 @@ def oversample_smote(dataset: Dataset):
     pass
 
 
-def load_for_training() -> Tuple[Dataset, Dataset]:
-    dataset = load()
+def load_for_training(dataset_path: str = None) -> Tuple[Dataset, Dataset]:
+    dataset = load(dataset_path)
     processed = preprocess(dataset)
     split = split_dataset(processed)
     return split["train"], split["test"]
