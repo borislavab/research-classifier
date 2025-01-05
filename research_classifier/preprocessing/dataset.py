@@ -3,6 +3,7 @@ from typing import List
 import kagglehub
 import os
 from datasets import load_dataset, Dataset
+import numpy as np
 
 LABELS = [
     "acc-phys",
@@ -207,9 +208,26 @@ def extract_categories(dataset: Dataset) -> List[str]:
     return sorted(all_categories)
 
 
-def extract_labels(categories: str) -> List[int]:
-    sample_categories = set(categories.split(" "))
-    return [1.0 if label in sample_categories else 0.0 for label in LABELS]
+def extract_labels(categories: str | List[str]) -> List[int]:
+    # Handle single string case
+    if isinstance(categories, str):
+        sample_categories = set(categories.split(" "))
+        return np.array(
+            [1.0 if label in sample_categories else 0.0 for label in LABELS]
+        )
+
+    # Handle batch case
+    # Convert each category string to a set of labels
+    category_sets = [set(cat.split(" ")) for cat in categories]
+
+    # Create output array of zeros
+    output = np.zeros((len(categories), len(LABELS)), dtype=np.float32)
+
+    # Vectorized operation using numpy
+    for i, label in enumerate(LABELS):
+        output[:, i] = [1.0 if label in cat_set else 0.0 for cat_set in category_sets]
+
+    return output
 
 
 if __name__ == "__main__":

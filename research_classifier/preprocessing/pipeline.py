@@ -12,9 +12,12 @@ class Pipeline:
         self.tokenizer = tokenizer
         self.processors = processors if processors else []
 
-    def process_abstract(self, abstract: str) -> str:
+    def process_abstract(self, abstract: str | List[str]) -> str | List[str]:
         for processor in self.processors:
-            abstract = processor.process(abstract)
+            if isinstance(abstract, str):
+                abstract = processor.process(abstract)
+            else:
+                abstract = [processor.process(a) for a in abstract]
         return self.tokenizer.tokenize(abstract)
 
     def process_sample(self, sample: dict) -> dict:

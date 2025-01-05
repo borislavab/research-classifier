@@ -12,10 +12,12 @@ pipeline = Pipeline(tokenizingProcessor)
 collator = DataCollatorWithPadding(tokenizer=tokenizingProcessor.tokenizer)
 
 
-def preprocess(dataset: Dataset):
-    # TODO: process in batches: batched=True, batch_size=1000
+def preprocess(dataset: Dataset, batch_size: int = 1000):
     return dataset.map(
-        pipeline.process_sample, remove_columns=["title", "categories", "abstract"]
+        pipeline.process_sample,
+        batched=True,
+        batch_size=batch_size,
+        remove_columns=["title", "categories", "abstract"],
     )
 
 
@@ -43,7 +45,7 @@ if __name__ == "__main__":
     dataset_path = "/Users/bbagaliyska/.cache/kagglehub/datasets/Cornell-University/arxiv/versions/212/"
     dataset_path += "/arxiv-metadata-oai-snapshot.json"
     dataset = load(dataset_path, head=5)
-    processed = preprocess(dataset)
+    processed = preprocess(dataset, batch_size=3)
     for sample in processed:
         print(sample)
     print("-----------------")

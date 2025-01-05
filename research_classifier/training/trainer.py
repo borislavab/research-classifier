@@ -39,6 +39,7 @@ def get_trainer(dataset_path: str = None, output_dir: str = "./output"):
         load_best_model_at_end=True,
         metric_for_best_model="f1_macro",
         greater_is_better=True,
+        report_to="none",
     )
 
     trainer = Trainer(

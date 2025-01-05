@@ -11,6 +11,7 @@ conda activate .conda
 
 ```bash
 conda install --file requirements.txt
+pip install -e .
 ```
 
 # Dataset analysis and decision records
