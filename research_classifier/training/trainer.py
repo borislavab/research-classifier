@@ -3,9 +3,9 @@ from transformers import (
     TrainingArguments,
     Trainer,
 )
-from preprocessing.dataset import LABELS
-from training.dataset import collator, load_for_training
-from training.metrics import compute_metrics
+from research_classifier.preprocessing.dataset import LABELS
+from research_classifier.training.dataset import collator, load_for_training
+from research_classifier.training.metrics import compute_metrics
 import json
 import sys
 

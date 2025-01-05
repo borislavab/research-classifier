@@ -1,7 +1,7 @@
 from typing import Dict
 
 import numpy as np
-from datasets import EvalPrediction
+from transformers.trainer_utils import EvalPrediction
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
