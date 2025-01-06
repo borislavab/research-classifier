@@ -28,6 +28,7 @@ def filter_sample(sample: dict, drop_probs: dict) -> bool:
 # as a result combinations are more likely to be preserved
 # TODO: implement more sophisticated undersampling which reasons about unnecessary samples to remove
 # e.g. near-miss or condensed nearest neighbor
+# new dataset length is 1250081
 def undersample(dataset: Dataset, threshold: float = None) -> Dataset:
     # find median of category counts
     if threshold is None:
@@ -40,13 +41,9 @@ def undersample(dataset: Dataset, threshold: float = None) -> Dataset:
     return dataset.filter(lambda sample: filter_sample(sample, drop_probs))
 
 
-def oversample_smote(dataset: Dataset):
-    pass
-
-
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: python resampling.py <dataset_path> <output_path>")
+        print("Usage: python undersampling.py <dataset_path> <output_path>")
         sys.exit(1)
     dataset_path = sys.argv[1]
     output_path = sys.argv[2]

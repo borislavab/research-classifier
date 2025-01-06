@@ -195,7 +195,7 @@ def load(dataset_path: str = None, head: int = None) -> Dataset:
     if not dataset_path:
         dataset_path = download()
     dataset = load_dataset("json", data_files=dataset_path, split="train")
-    dataset = dataset.select_columns(["title", "categories", "abstract"])
+    dataset = dataset.select_columns(["categories", "abstract"])
     if head:
         return dataset.select(range(head))
     return dataset

@@ -17,7 +17,7 @@ def preprocess(dataset: Dataset, batch_size: int = 1000):
         pipeline.process_sample,
         batched=True,
         batch_size=batch_size,
-        remove_columns=["title", "categories", "abstract"],
+        remove_columns=["categories", "abstract"],
     )
 
 
