@@ -1,6 +1,4 @@
-from research_classifier.analysis.categories import (
-    distinct_categories_count as category_counts,
-)
+from research_classifier.preprocessing.categories import calculate_label_counts
 import numpy as np
 from datasets import Dataset
 from research_classifier.training.dataset import load
@@ -30,8 +28,9 @@ def filter_sample(sample: dict, drop_probs: dict) -> bool:
 # e.g. near-miss or condensed nearest neighbor
 # new dataset length is 1250081
 def undersample(dataset: Dataset, threshold: float = None) -> Dataset:
-    # find median of category counts
     if threshold is None:
+        # find median of category counts
+        category_counts = calculate_label_counts(dataset)
         threshold = np.median(list(category_counts.values()))
         print(f"Using median {threshold} as threshold")
     drop_probs = {

@@ -15,6 +15,7 @@ def get_model():
     labels = get_labels()
     id2label = {idx: label for idx, label in enumerate(labels)}
     label2id = {label: idx for idx, label in enumerate(labels)}
+    print("Label count is ", len(labels))
 
     return BertForSequenceClassification.from_pretrained(
         "bert-base-cased",
@@ -25,7 +26,11 @@ def get_model():
     )
 
 
-def get_trainer(dataset_path: str = None, output_dir: str = "./output"):
+def get_trainer(
+    dataset_path: str = None,
+    output_dir: str = "./output",
+    num_epochs: int = 8,
+):
     (train_dataset, eval_dataset) = load_for_training(dataset_path)
 
     training_arguments = TrainingArguments(
@@ -35,7 +40,7 @@ def get_trainer(dataset_path: str = None, output_dir: str = "./output"):
         evaluation_strategy="epoch",
         per_device_train_batch_size=16,
         per_device_eval_batch_size=16,
-        num_train_epochs=8,
+        num_train_epochs=num_epochs,
         load_best_model_at_end=True,
         metric_for_best_model="f1_macro",
         greater_is_better=True,
@@ -66,6 +71,7 @@ def train_and_save(trainer):
 
 if __name__ == "__main__":
     dataset_path = sys.argv[1] if len(sys.argv) > 1 else None
-    output_dir = sys.argv[2] if len(sys.argv) > 2 else None
-    trainer = get_trainer(dataset_path, output_dir)
+    output_dir = sys.argv[2] if len(sys.argv) > 2 else "./output"
+    num_epochs = int(sys.argv[3]) if len(sys.argv) > 3 else 8
+    trainer = get_trainer(dataset_path, output_dir, num_epochs)
     train_and_save(trainer)
