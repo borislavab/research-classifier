@@ -3,7 +3,7 @@ from transformers import (
     TrainingArguments,
     Trainer,
 )
-from research_classifier.preprocessing.dataset import LABELS
+from research_classifier.preprocessing.categories import get_labels
 from research_classifier.training.dataset import collator, load_for_training
 from research_classifier.training.metrics import compute_metrics
 import json
@@ -11,14 +11,14 @@ import sys
 
 
 def get_model():
-    # categories count is 176
-    categories_count = len(LABELS)
-    id2label = {idx: label for idx, label in enumerate(LABELS)}
-    label2id = {label: idx for idx, label in enumerate(LABELS)}
+    # labels count is 162
+    labels = get_labels()
+    id2label = {idx: label for idx, label in enumerate(labels)}
+    label2id = {label: idx for idx, label in enumerate(labels)}
 
     return BertForSequenceClassification.from_pretrained(
         "bert-base-cased",
-        num_labels=categories_count,
+        num_labels=len(labels),
         problem_type="multi_label_classification",
         id2label=id2label,
         label2id=label2id,

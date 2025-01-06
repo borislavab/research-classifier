@@ -1,4 +1,4 @@
-from .processors import StopWordRemover, DefaultTokenizer
+from .abstract import StopWordRemover, DefaultTokenizer
 from .dataset import load
 from .pipeline import Pipeline
 

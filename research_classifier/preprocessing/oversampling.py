@@ -7,23 +7,6 @@ from research_classifier.preprocessing.dataset import load
 from research_classifier.analysis.scrape_categories import scraped_categories
 import sys
 
-category_map = {
-    "cmp-lg": "cs.CL",
-    "funct-an": "math.FA",
-    "supr-con": "cond-mat.supr-con",
-    "bayes-an": "physics.data-an",
-    "acc-phys": "physics.acc-ph",
-    "comp-gas": "nlin.CG",
-    "adap-org": "nlin.AO",
-    "ao-sci": "physics.ao-ph",
-    "chem-ph": "physics.chem-ph",
-    "atom-ph": "physics.atom-ph",
-    "plasm-ph": "physics.plasm-ph",
-    "patt-sol": "nlin.PS",
-    "dg-ga": "math.DG",
-    "mtrl-th": "cond-mat.mtrl-sci",
-}
-
 
 def oversample_gpt(dataset: Dataset):
     oversample_counts = {

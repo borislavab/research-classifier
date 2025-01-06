@@ -1,5 +1,5 @@
 import pytest
-from .processors import StopWordRemover
+from .abstract import StopWordRemover
 
 
 @pytest.fixture

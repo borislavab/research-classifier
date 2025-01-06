@@ -17,3 +17,7 @@ pip install -e .
 # Dataset analysis and decision records
 
 Refer to the [analysis.ipynb](research_classifier/analysis/analysis.ipynb) notebook for dataset analysis conducted, helpful visualizations, alternative approaches considered and decision chosen.
+
+# Improvements proposed
+
+- [ ] Implement more sophisticated undersampling for multi-label classification - https://www.din.uem.br/yandre/Neurocomputing_MLTL.pdf
