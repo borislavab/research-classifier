@@ -15,7 +15,7 @@ class Pipeline:
         self.categories_processor = CategoriesProcessor()
 
     def process_abstract(self, abstract: str | List[str]) -> str | List[str]:
-        for processor in self.processors:
+        for processor in self.abstract_processors:
             if isinstance(abstract, str):
                 abstract = processor.process(abstract)
             else:
