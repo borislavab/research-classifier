@@ -41,6 +41,7 @@ def get_trainer(
     print(f"Will train for {num_epochs} epochs")
     print(f"Train dataset size: {len(train_dataset)}")
     print(f"Eval dataset size: {len(eval_dataset)}")
+    print(f"Device: {device}")
 
     training_arguments = TrainingArguments(
         output_dir=output_dir,
