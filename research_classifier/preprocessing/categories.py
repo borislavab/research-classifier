@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from datasets import Dataset
 import numpy as np
 from research_classifier.analysis.categories import distinct_categories
@@ -23,6 +23,10 @@ category_map = {
     "patt-sol": "nlin.PS",
     "dg-ga": "math.DG",
     "mtrl-th": "cond-mat.mtrl-sci",
+    "alg-geom": "math.AG",
+    "chao-dyn": "nlin.CD",
+    "q-alg": "math.QA",
+    "solv-int": "nlin.SI",
 }
 
 
@@ -43,6 +47,16 @@ def get_labels(dataset: Dataset = None):
 
 def extract_sample_categories(categories: str) -> List[str]:
     return {category_map.get(category, category) for category in categories.split(" ")}
+
+
+def calculate_label_counts(dataset: Dataset) -> Dict[str, int]:
+    all_labels = get_labels(dataset)
+    label_counts = {label: 0 for label in all_labels}
+    for sample_categories in dataset["categories"]:
+        sample_categories_set = extract_sample_categories(sample_categories)
+        for category in sample_categories_set:
+            label_counts[category] += 1
+    return label_counts
 
 
 class CategoriesProcessor:
@@ -81,7 +95,7 @@ class CategoriesProcessor:
 
 
 if __name__ == "__main__":
-    path = download()
+    path = "/Users/bbagaliyska/.cache/kagglehub/datasets/Cornell-University/arxiv/versions/212/arxiv-metadata-oai-snapshot.json"
     dataset = load(path)
-    all_categories = extract_categories(dataset)
-    print(all_categories)
+    label_counts = calculate_label_counts(dataset)
+    print(label_counts)
