@@ -22,11 +22,13 @@ def preprocess(dataset: Dataset, batch_size: int = 1000):
 
 
 def split_dataset(dataset: Dataset):
-    return dataset.train_test_split(test_size=0.01, shuffle=True, seed=42)
+    return dataset.train_test_split(test_size=0.1, shuffle=True, seed=42)
 
 
-def load_for_training(dataset_path: str = None) -> Tuple[Dataset, Dataset]:
-    dataset = load(dataset_path)
+def load_for_training(
+    dataset_path: str = None, head: int = None
+) -> Tuple[Dataset, Dataset]:
+    dataset = load(dataset_path, head=head)
     processed = preprocess(dataset)
     split = split_dataset(processed)
     return split["train"], split["test"]
