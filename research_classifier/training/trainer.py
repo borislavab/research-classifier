@@ -51,8 +51,8 @@ def get_trainer(
         evaluation_strategy="steps",
         eval_steps=500,
         # increase batch size since GPU is underutilized
-        per_device_train_batch_size=1 if device == "cpu" else 24,
-        per_device_eval_batch_size=1 if device == "cpu" else 24,
+        per_device_train_batch_size=1 if device == "cpu" else 64,
+        per_device_eval_batch_size=1 if device == "cpu" else 64,
         num_train_epochs=num_epochs,
         load_best_model_at_end=True,
         metric_for_best_model="f1_macro",
