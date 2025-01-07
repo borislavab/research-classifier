@@ -7,7 +7,7 @@ from research_classifier.preprocessing import (
     load,
 )
 
-tokenizingProcessor = DefaultTokenizer()
+tokenizingProcessor = DefaultTokenizer(is_training=True)
 pipeline = Pipeline(tokenizingProcessor)
 collator = DataCollatorWithPadding(tokenizer=tokenizingProcessor.tokenizer)
 

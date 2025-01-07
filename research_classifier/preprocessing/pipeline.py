@@ -29,3 +29,6 @@ class Pipeline:
         tokenized_sample = self.process_abstract(sample["abstract"])
         tokenized_sample["labels"] = self.process_categories(sample["categories"])
         return tokenized_sample
+
+    def get_labels(self):
+        return self.categories_processor.get_labels()

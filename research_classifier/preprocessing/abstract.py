@@ -34,7 +34,8 @@ class AbstractTokenizer(ABC):
 
 
 class DefaultTokenizer(AbstractTokenizer):
-    def __init__(self):
+    def __init__(self, is_training: bool = False):
+        self.is_training = is_training
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-cased", is_fast=True)
 
     def tokenize(self, abstract: str):
@@ -44,4 +45,8 @@ class DefaultTokenizer(AbstractTokenizer):
         #
         # truncation should be good enough as abstracts are rarely longer than 512 tokens
         # and even when they are, they don't exceed by much
-        return self.tokenizer(abstract, truncation=True)
+        if self.is_training:
+            # do not return pytorch tensors in training, it led to error
+            return self.tokenizer(abstract, truncation=True)
+        else:
+            return self.tokenizer(abstract, truncation=True, return_tensors="pt")
