@@ -172,3 +172,14 @@ cython_debug/
 
 # VSCode
 .vscode/
+
+# BERT training
+research_classifier/output_final/
+research_classifier/output/
+research_classifier/prediction/model/
+
+# Mac OS
+.DS_Store   
+
+# Working jupyter notebook
+Untitled.ipynb

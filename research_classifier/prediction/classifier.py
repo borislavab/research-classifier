@@ -1,7 +1,7 @@
 from transformers import BertForSequenceClassification
 from typing import List
 import torch
-from research_classifier.preprocessing import DefaultTokenizer, Pipeline
+from research_classifier.preprocessing import Pipeline, DefaultTokenizer
 
 
 class ArticleClassifier:
@@ -16,15 +16,14 @@ class ArticleClassifier:
 
     def predict(self, article: str) -> List[str]:
         tokenized = self.pipeline.process_abstract(article)
-        input_ids = tokenized["input_ids"][0]
 
         with torch.no_grad():
             outputs = self.model(**tokenized)
             logits = outputs.logits
             probabilities = torch.sigmoid(logits).squeeze()
 
-        label_indices = torch.where(probabilities > 0.5)
-        labels = [self.labels[i] for i in label_indices]
+        label_indices = torch.where(probabilities > 0.5)[0]
+        labels = [self.labels[int(i)] for i in label_indices]
         return labels
 
 
