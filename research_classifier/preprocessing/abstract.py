@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from nltk.corpus import stopwords
 import nltk
 from transformers import AutoTokenizer
+import torch
 
 
 class AbstractProcessor(ABC):
@@ -37,6 +38,7 @@ class DefaultTokenizer(AbstractTokenizer):
     def __init__(self, is_training: bool = False):
         self.is_training = is_training
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-cased", is_fast=True)
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     def tokenize(self, abstract: str):
         # do not pad at this stage to max length,
@@ -49,4 +51,6 @@ class DefaultTokenizer(AbstractTokenizer):
             # do not return pytorch tensors in training, it led to error
             return self.tokenizer(abstract, truncation=True)
         else:
-            return self.tokenizer(abstract, truncation=True, return_tensors="pt")
+            return self.tokenizer(abstract, truncation=True, return_tensors="pt").to(
+                self.device
+            )

@@ -5,7 +5,10 @@ from transformers import (
 )
 from research_classifier.preprocessing.categories import get_labels
 from research_classifier.training.dataset import collator, load_for_training
-from research_classifier.training.metrics import compute_metrics
+from research_classifier.training.metrics import (
+    compute_metrics,
+    compute_metrics_batched,
+)
 import json
 import sys
 import torch
@@ -20,6 +23,10 @@ def get_model():
     label2id = {label: idx for idx, label in enumerate(labels)}
     print("Label count is ", len(labels))
 
+    # By default, the "multi_label_classification" problem uses
+    # sigmoid activation function and binary cross entropy loss
+    # To account for class imbalance, we could override the loss function
+    # weighted binary cross entropy or focal loss
     return BertForSequenceClassification.from_pretrained(
         "bert-base-cased",
         num_labels=len(labels),
@@ -52,7 +59,7 @@ def get_trainer(
         eval_steps=500,
         # increase batch size since GPU is underutilized
         per_device_train_batch_size=1 if device == "cpu" else 64,
-        per_device_eval_batch_size=1 if device == "cpu" else 64,
+        per_device_eval_batch_size=2 if device == "cpu" else 64,
         num_train_epochs=num_epochs,
         load_best_model_at_end=True,
         metric_for_best_model="f1_macro",
@@ -60,6 +67,9 @@ def get_trainer(
         report_to="none",
         # Enable mixed precision for faster computation
         fp16=(device == "cuda"),
+        # TODO: currently evaluation seems to be slow, might be due to an OOM issue observed
+        # evaluating in batches could resolve this, requires refactoring of compute_metrics - WIP
+        # batch_eval_metrics=True,
     )
 
     trainer = Trainer(
@@ -67,6 +77,7 @@ def get_trainer(
         args=training_arguments,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
+        # use compute_metrics_batched if batch_eval_metrics is set to True
         compute_metrics=compute_metrics,
         data_collator=collator,
     )
@@ -74,8 +85,8 @@ def get_trainer(
     return trainer
 
 
-def train_and_save(trainer):
-    trainer.train()
+def train_and_save(trainer: Trainer):
+    trainer.train(resume_from_checkpoint=True)
     trainer.save_model("./output_final/model")
 
     # Save metrics

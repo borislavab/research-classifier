@@ -22,7 +22,8 @@ def preprocess(dataset: Dataset, batch_size: int = 1000):
 
 
 def split_dataset(dataset: Dataset):
-    return dataset.train_test_split(test_size=0.1, shuffle=True, seed=42)
+    # evaluation is currently a bottleneck - decrease test size
+    return dataset.train_test_split(test_size=0.005, shuffle=True, seed=42)
 
 
 def load_for_training(
