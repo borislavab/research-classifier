@@ -23,8 +23,13 @@ class ArticleClassifier:
             probabilities = torch.sigmoid(logits).squeeze()
 
         label_indices = torch.where(probabilities > 0.5)[0]
-        labels = [self.labels[int(i)] for i in label_indices]
-        return labels
+        if len(label_indices) > 0:
+            # there are predictions above threshold
+            return [self.labels[int(i)] for i in label_indices]
+        else:
+            # no predictions above threshold - choose the top prediction
+            top_prediction = torch.argmax(probabilities)
+            return [self.labels[int(top_prediction)]]
 
 
 if __name__ == "__main__":

@@ -55,7 +55,7 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
 
     # Hamming loss is better for multi-label classification problems as it accounts for label-level correct predictions
     # Smaller hamming loss is better
-    hamming_loss = hamming_loss(y_true=y_true, y_pred=y_pred)
+    hamming = hamming_loss(y_true=y_true, y_pred=y_pred)
 
     # When ``true positive + false positive == 0``, precision is undefined - exclude these labels
     labels_with_positive_samples = np.where(y_true.sum(axis=0) > 0)[0]
@@ -151,7 +151,7 @@ def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
     # In practice, hamming loss, f1_macro, and f1_weighted are the most telling indicators of overall performance
     return {
         "accuracy": accuracy,
-        "hamming_loss": hamming_loss,
+        "hamming_loss": hamming,
         "precision_micro": precision_micro,
         "precision_macro": precision_macro,
         "precision_weighted": precision_weighted,
