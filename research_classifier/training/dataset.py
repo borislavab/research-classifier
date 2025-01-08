@@ -8,6 +8,12 @@ from research_classifier.preprocessing import (
 )
 
 tokenizingProcessor = DefaultTokenizer(is_training=True)
+# start simple with no other preprocessing than tokenization to see results
+# motivation is that the abstracts are in natural language
+# which matches BERT's pretraining inputs
+# and are likely to be high quality information-rich text
+# a good candidate for future preprocessing is handling special characters in formulas
+# iterate later to see what works best in practice
 pipeline = Pipeline(tokenizingProcessor)
 collator = DataCollatorWithPadding(tokenizer=tokenizingProcessor.tokenizer)
 

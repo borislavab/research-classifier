@@ -3,9 +3,16 @@ from nltk.corpus import stopwords
 import nltk
 from transformers import AutoTokenizer
 import torch
+from nltk.stem import WordNetLemmatizer
 
 
 class AbstractProcessor(ABC):
+    """
+    Goal of this abstraction is to be able to easily tweak preprocessing steps for abstracts
+    to find which works best for the BERT model.
+    A future goal could be to also persist the processors used in training along with the model,
+    so the same preprocessing pipeline can be used for inference.
+    """
 
     # TODO: support batch processing
     @abstractmethod
@@ -26,6 +33,15 @@ class StopWordRemover(AbstractProcessor):
                 and len(word.strip()) > 0
             ]
         )
+
+
+class Lemmatizer(AbstractProcessor):
+    def __init__(self):
+        nltk.download("wordnet")
+        self.lemmatizer = WordNetLemmatizer()
+
+    def process(self, abstract: str) -> str:
+        return " ".join([self.lemmatizer.lemmatize(word) for word in abstract.split()])
 
 
 class AbstractTokenizer(ABC):
