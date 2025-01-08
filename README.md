@@ -2,7 +2,7 @@
 
 This project is a web application for classifying research papers into multiple categories based on their abstracts.  
 The repo includes fine-tuning a pre-trained BERT bert-base-cased model based on the [ArXiv dataset from Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv).  
-The problem is a multi-label classification problem with 176 original categories, 2635119 and significant class imbalance.  
+The problem is a multi-label classification problem with 176 original categories, 2635119 samples and significant class imbalance.  
 For the training I used Google Colab with a T4 GPU which connects to Google Drive for storage.  
 The notebook can be found in the [research_classifier.ipynb](research_classifier/training/research_classifier.ipynb) file.
 
@@ -31,6 +31,10 @@ Install additional dependencies for the web layer (celery, redis, etc.) if using
 ```bash
 pip install -r requirements/requirements_web.txt
 ```
+
+# Management commands
+
+I added a few utility commands to manage the dataset and train the model:
 
 ## Undersample dataset:
 
@@ -71,7 +75,7 @@ To generate `target_count` samples for a given set of labels run:
 python manage.py oversample_dataset path/to/full/dataset path/to/output/file.jsonl target_count label1 label2 ...
 ```
 
-## Run the web app:
+# Run the web app:
 
 The app looks for a model checkpoint in the `research_classifier/prediction/model` directory.
 TODO: Update with instructions to download the model checkpoint.
