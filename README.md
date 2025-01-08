@@ -171,4 +171,9 @@ Refer to the [analysis.ipynb](research_classifier/analysis/analysis.ipynb) noteb
 
 # Improvements proposed
 
+- [ ] Run the training with a dataset containing oversampled examples from the least performing classes as identified in the analysis notebook
 - [ ] Implement more sophisticated undersampling for multi-label classification - https://www.din.uem.br/yandre/Neurocomputing_MLTL.pdf
+- [ ] Compute custom loss like focal loss or weighted cross entropy for the class imbalance problem
+- [ ] Implement processing of formulas and scientific notation in the abstracts
+- [ ] Serialize and deserialize the pipeline settings to be stored along with the saved model for inference
+- [ ] Train a custom tokenizer with extended vocabulary for scientific terms
