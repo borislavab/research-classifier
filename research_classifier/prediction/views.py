@@ -1,24 +1,27 @@
-from django.shortcuts import render
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
-import json
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 from .tasks import predict_article
 import logging
 from celery.result import AsyncResult
+from datetime import datetime
+from celery import states
+from .dtos import OperationStatus
 
 logger = logging.getLogger(__name__)
 
 
-@csrf_exempt
-@require_http_methods(["POST"])
+@api_view(["POST"])
 def predict(request):
     try:
-        data = json.loads(request.body)
+        data = request.data
+        logger.info(f"Prediction request received: {data}")
 
         if "article" not in data:
-            return JsonResponse(
-                {"error": "Missing 'article' field in request body"}, status=400
+            return Response(
+                {"error": "Missing 'article' field in request body"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
         article = data["article"]
 
@@ -27,29 +30,51 @@ def predict(request):
         logger.info(f"Task submitted with ID: {task.id}")
 
         # Return task ID immediately
-        return JsonResponse({"task_id": task.id, "status": "processing"})
-
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON in request body"}, status=400)
+        return Response(
+            {
+                "task_id": task.id,
+                "status": OperationStatus.PENDING,
+                "created_at": datetime.now().isoformat(),
+            },
+            status=status.HTTP_202_ACCEPTED,
+            headers={"Location": f"/api/prediction/{task.id}", "Retry-After": "1"},
+        )
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@csrf_exempt
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def get_prediction(request, task_id):
     logger.info(f"Getting prediction for task ID {task_id}")
-    task = AsyncResult(task_id)
+    task: AsyncResult = AsyncResult(task_id)
     logger.info(f"Response: {task.status}")
-    status = task.status
-    traceback = task.traceback
-    result = task.result
-    if isinstance(result, Exception):
-        return JsonResponse(
-            {"status": status, "error": str(result), "traceback": traceback}
+    if isinstance(task.result, Exception) or task.status == states.FAILURE:
+        return Response(
+            {
+                "status": OperationStatus.ERROR,
+                "error": str(task.result),
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-    if task.status == "PENDING":
-        return JsonResponse({"status": "pending"})
-    if task.status == "SUCCESS":
-        return JsonResponse(task.result)
-    return JsonResponse({"status": "unknown"})
+
+    match task.status:
+        case states.SUCCESS:
+            return Response(
+                {
+                    "predictions": task.result,
+                    "status": OperationStatus.SUCCESS,
+                },
+                status=status.HTTP_200_OK,
+            )
+        case _:
+            return Response(
+                {
+                    "status": (
+                        OperationStatus.PENDING
+                        if task.status == states.PENDING
+                        else OperationStatus.PROCESSING
+                    ),
+                },
+                status=status.HTTP_202_ACCEPTED,
+                headers={"Retry-After": "1"},
+            )

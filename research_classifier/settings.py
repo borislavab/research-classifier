@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "research_classifier.prediction",
 ]
 
@@ -134,3 +136,9 @@ CELERY_RESULT_SERIALIZER = "json"
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_DB = 0
+
+# Model settings
+MODEL_CHECKPOINT_PATH = os.environ.get(
+    "MODEL_CHECKPOINT_PATH",
+    str(Path(__file__).parent / "prediction/model/checkpoint"),
+)

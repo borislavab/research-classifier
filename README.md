@@ -59,12 +59,21 @@ curl -X POST http://127.0.0.1:8000/api/predict/ -H "Content-Type: application/js
 Sample response:
 
 ```json
-{ "task_id": "b9539b33-c576-498a-b785-b0acae35e538", "status": "processing" }
+{
+  "task_id": "85df8632-8fa5-4692-9a23-b8e508405b0d",
+  "status": "pending",
+  "created_at": "2025-01-07T23:33:58.086598"
+}
 ```
 
-This is an asynchronous API, so the client should poll for the results.
+This is an asynchronous API for a long running operation, so the client is expected to poll for the results.  
+For this the HTTP payload returns standard fields:
 
-To check the status of the task:
+> HTTP/1.1 202 Accepted
+> Retry-After: 1
+> Location: /api/prediction/b35e5c2c-3674-46da-aa6c-0d2c272b94a7
+
+Following the location link with a GET request will return the results of the operation:
 
 ```bash
 curl -L http://127.0.0.1:8000/api/prediction/<task_id>
@@ -75,6 +84,10 @@ Sample response:
 ```json
 { "predictions": ["cs.LG", "stat.ML"], "status": "success" }
 ```
+
+with status 200.
+While processing it returns a 202 status with a Retry-After header with pending/processing status.
+On an error it returns an error message with an appropriate error status.
 
 > **Note:** The API is asynchronous since it's expected that model prediction is a CPU-bound task
 > which is better to be ran in a separate process from the web server to ensure responsiveness and availability.  
