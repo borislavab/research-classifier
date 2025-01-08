@@ -11,6 +11,6 @@ if __name__ == "__main__":
     dataset_path = sys.argv[3]
     evaluate(
         model_path=model_path,
-        output_dir="./output",
-        dataset_path="./data/undersampled_dataset.json",
+        output_dir=output_dir,
+        dataset_path=dataset_path,
     )
