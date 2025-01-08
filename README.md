@@ -45,6 +45,20 @@ python manage.py evaluate_model --model-path path/to/checkpoint --output-dir pat
 
 `sample-count` parameter is also exposed for testing and for decreasing the dataset size. If not specified, the full dataset is used.
 
+## Run oversampling:
+
+This uses a locally running the Llama 3.2 3B model. To run it install ollama on your machine and run:
+
+```bash
+ollama run llama3.2
+```
+
+To generate `target_count` samples for a given set of labels run:
+
+```bash
+python manage.py oversample_dataset path/to/full/dataset path/to/output/file.jsonl target_count label1 label2 ...
+```
+
 ## Run the web app:
 
 The app looks for a model checkpoint in the `research_classifier/prediction/model` directory.
