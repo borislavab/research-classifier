@@ -1,3 +1,7 @@
+# Dataset analysis and decision records
+
+Refer to the [analysis.ipynb](research_classifier/analysis/analysis.ipynb) notebook for dataset analysis conducted, helpful visualizations, alternative approaches considered and decision chosen.
+
 # How to run locally
 
 1. Create and activate a conda environment:
@@ -164,10 +168,6 @@ From an activated conda environment:
 - pip list --format=freeze > requirements_pip.txt
 
 For ease of development I'm using one conda environment for both the web app and training the model. For production use cases separate environments should be used so the web server wouldn't have to install the model training dependencies - example file structure in [requirements](requirements) folder.
-
-# Dataset analysis and decision records
-
-Refer to the [analysis.ipynb](research_classifier/analysis/analysis.ipynb) notebook for dataset analysis conducted, helpful visualizations, alternative approaches considered and decision chosen.
 
 # Improvements proposed
 
