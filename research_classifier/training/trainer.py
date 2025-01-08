@@ -7,7 +7,7 @@ from research_classifier.preprocessing.categories import get_labels
 from research_classifier.training.dataset import collator, load_for_training
 from research_classifier.training.metrics import (
     compute_metrics,
-    compute_metrics_batched,
+    compute_metrics_debug_labels,
 )
 import json
 import sys
@@ -16,7 +16,7 @@ import torch
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
-def get_model():
+def get_model(model_path: str = None):
     # labels count is 158
     labels = get_labels()
     id2label = {idx: label for idx, label in enumerate(labels)}
@@ -28,7 +28,7 @@ def get_model():
     # To account for class imbalance, we could override the loss function
     # weighted binary cross entropy or focal loss
     return BertForSequenceClassification.from_pretrained(
-        "bert-base-cased",
+        model_path or "bert-base-cased",
         num_labels=len(labels),
         problem_type="multi_label_classification",
         id2label=id2label,
@@ -36,21 +36,8 @@ def get_model():
     )
 
 
-def get_trainer(
-    dataset_path: str = None,
-    output_dir: str = "./output",
-    num_epochs: int = 6,
-    sample_head: int = None,
-):
-    (train_dataset, eval_dataset) = load_for_training(
-        dataset_path=dataset_path, head=sample_head
-    )
-    print(f"Will train for {num_epochs} epochs")
-    print(f"Train dataset size: {len(train_dataset)}")
-    print(f"Eval dataset size: {len(eval_dataset)}")
-    print(f"Device: {device}")
-
-    training_arguments = TrainingArguments(
+def get_training_args(output_dir: str, num_epochs: int):
+    return TrainingArguments(
         output_dir=output_dir,
         save_strategy="steps",
         save_steps=500,
@@ -72,27 +59,56 @@ def get_trainer(
         # batch_eval_metrics=True,
     )
 
+
+def get_trainer(
+    dataset_path: str = None,
+    output_dir: str = "./output",
+    num_epochs: int = 6,
+    sample_head: int = None,
+    model_path: str = None,
+    custom_compute_metrics=None,
+):
+    (train_dataset, eval_dataset) = load_for_training(
+        dataset_path=dataset_path, head=sample_head
+    )
+    print(f"Will train for {num_epochs} epochs")
+    print(f"Train dataset size: {len(train_dataset)}")
+    print(f"Eval dataset size: {len(eval_dataset)}")
+    print(f"Device: {device}")
+
     trainer = Trainer(
-        model=get_model(),
-        args=training_arguments,
+        model=get_model(model_path),
+        args=get_training_args(output_dir, num_epochs),
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         # use compute_metrics_batched if batch_eval_metrics is set to True
-        compute_metrics=compute_metrics,
+        compute_metrics=custom_compute_metrics or compute_metrics,
         data_collator=collator,
     )
 
     return trainer
 
 
-def train_and_save(trainer: Trainer):
-    trainer.train(resume_from_checkpoint=True)
-    trainer.save_model("./output_final/model")
-
-    # Save metrics
+def evaluate(
+    model_path: str,
+    output_dir: str = "./output",
+    dataset_path: str = None,
+    sample_head: int = None,
+):
+    trainer = get_trainer(
+        model_path=model_path,
+        output_dir=output_dir,
+        dataset_path=dataset_path,
+        sample_head=sample_head,
+        custom_compute_metrics=compute_metrics_debug_labels,
+    )
     metrics = trainer.evaluate()
-    with open("./output_final/metrics.json", "w") as f:
+    with open(f"{output_dir}/metrics.json", "w") as f:
         json.dump(metrics, f)
+
+
+def train_and_save(trainer: Trainer, from_scratch: bool = False):
+    trainer.train(resume_from_checkpoint=not from_scratch)
 
 
 if __name__ == "__main__":

@@ -44,6 +44,42 @@ def compute_metrics_batched(
     return {}
 
 
+def compute_metrics_debug_labels(eval_pred: EvalPrediction) -> Dict[str, float]:
+    logits = eval_pred.predictions
+    probs = sigmoid(logits)
+    y_pred = (probs > 0.5).astype(int)
+    y_true = eval_pred.label_ids.astype(int)
+
+    labels_with_positive_samples = np.where(y_true.sum(axis=0) > 0)[0]
+    print(labels_with_positive_samples)
+    precision_per_label = precision_score(
+        y_true=y_true,
+        y_pred=y_pred,
+        average=None,
+        zero_division=0,
+    )
+    recall_per_label = recall_score(
+        y_true=y_true,
+        y_pred=y_pred,
+        average=None,
+        zero_division=0,
+    )
+    f1_per_label = f1_score(
+        y_true=y_true,
+        y_pred=y_pred,
+        average=None,
+        zero_division=0,
+    )
+
+    results = {}
+    for label in range(y_true.shape[1]):
+        results[f"precision_{label}"] = precision_per_label[label]
+        results[f"recall_{label}"] = recall_per_label[label]
+        results[f"f1_{label}"] = f1_per_label[label]
+
+    return results
+
+
 def compute_metrics(eval_pred: EvalPrediction) -> Dict[str, float]:
     logits = eval_pred.predictions
     probs = sigmoid(logits)

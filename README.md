@@ -14,7 +14,32 @@ conda install --file requirements.txt
 pip install -e .
 ```
 
-3. Run the web app:
+## Undersample dataset:
+
+```bash
+python manage.py undersample_dataset path/to/full/dataset output/path/for/undersampled/dataset --threshold optional_threshold
+```
+
+## Run training:
+
+```bash
+python manage.py train_model --output-dir path/to/output --dataset path/to/full/dataset --num-epochs 3
+```
+
+If path to dataset is not provided, it will be downloaded from KaggleHub.  
+By default this will resume from the a checkpoint it finds in the output directory.  
+Pass `--from-scratch` to start training from scratch.  
+`--sample-count` parameter is also exposed for testing and for decreasing the dataset size. If not specified, the full dataset is used.
+
+## Run evaluation:
+
+```bash
+python manage.py evaluate_model --model-path path/to/checkpoint --output-dir path/to/output --dataset path/to/full/dataset
+```
+
+`sample-count` parameter is also exposed for testing and for decreasing the dataset size. If not specified, the full dataset is used.
+
+## Run the web app:
 
 Install additional dependencies for the web layer (celery, redis, etc.):
 
@@ -76,7 +101,7 @@ For this the HTTP payload returns standard fields:
 Following the location link with a GET request will return the results of the operation:
 
 ```bash
-curl -L http://127.0.0.1:8000/api/prediction/<task_id>
+curl http://127.0.0.1:8000/api/prediction/<task_id>
 ```
 
 Sample response:

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "research_classifier.prediction",
+    "research_classifier.training",
+    "research_classifier.preprocessing",
 ]
 
 MIDDLEWARE = [
