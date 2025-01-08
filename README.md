@@ -14,6 +14,12 @@ conda install --file requirements.txt
 pip install -e .
 ```
 
+Install additional dependencies for the web layer (celery, redis, etc.) if using the API or management commands:
+
+```bash
+pip install -r requirements/requirements_web.txt
+```
+
 ## Undersample dataset:
 
 ```bash
@@ -40,12 +46,6 @@ python manage.py evaluate_model --model-path path/to/checkpoint --output-dir pat
 `sample-count` parameter is also exposed for testing and for decreasing the dataset size. If not specified, the full dataset is used.
 
 ## Run the web app:
-
-Install additional dependencies for the web layer (celery, redis, etc.):
-
-```bash
-pip install -r requirements/requirements_web.txt
-```
 
 The app looks for a model checkpoint in the `research_classifier/prediction/model` directory.
 TODO: Update with instructions to download the model checkpoint.
@@ -75,10 +75,10 @@ Run the server:
 python manage.py runserver
 ```
 
-Make a request to the server:
+Make a POST request to submit a prediction request to the server:
 
 ```bash
-curl -X POST http://127.0.0.1:8000/api/predict/ -H "Content-Type: application/json" -d '{"article": "This is a test article about machine learning."}'
+curl http://127.0.0.1:8000/api/predict/ -H "Content-Type: application/json" -d '{"article": "This is a test article about machine learning."}'
 ```
 
 Sample response:
