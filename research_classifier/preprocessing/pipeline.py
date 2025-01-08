@@ -5,6 +5,15 @@ import numpy as np
 
 
 class Pipeline:
+    """
+    Pipeline which takes care of the full preprocessing of samples
+    both in training and prediction time.
+    Flexible design which allows toggling and reordering different steps
+    to find which sequence works best for the model.
+    Preprocessing can easily be extended with additional functionalities
+    by implementing new AbstractProcessor subclasses.
+    """
+
     def __init__(
         self,
         tokenizer: AbstractTokenizer,

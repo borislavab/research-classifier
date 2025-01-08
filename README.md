@@ -70,6 +70,8 @@ Since the app uses Celery with a Redis backend, start a Redis container:
 docker run -d --name redis-server -p 6379:6379 redis:latest
 ```
 
+Advice from personal experience: Don't forget to stop the container later!! :)
+
 (Optional) To check connectivity to Redis (on Mac):
 
 ```bash
@@ -77,7 +79,15 @@ brew install redis
 redis-cli ping # should return PONG
 ```
 
-From the top level directory, start the Celery worker:
+Celery workers will load a model checkpoint to run predictions.
+They expect the checkpoint to be in the `research_classifier/prediction/model` directory by default,  
+but if you downloaded in a different path, you can supply it by setting the MODEL_CHECKPOINT_PATH environment variable:
+
+```bash
+export MODEL_CHECKPOINT_PATH=/path/to/checkpoint
+```
+
+Now from the top level directory, start the Celery worker:
 
 ```bash
 celery -A research_classifier worker --loglevel=info
@@ -126,13 +136,22 @@ Sample response:
 
 with status 200.
 While processing it returns a 202 status with a Retry-After header with pending/processing status.
-On an error it returns an error message with an appropriate error status.
+On an error it returns an error message with an appropriate error status.  
+The task result is stored in Redis for 10 minutes, after which it expires and cannot be retrieved.
 
 > **Note:** The API is asynchronous since it's expected that model prediction is a CPU-bound task
 > which is better to be ran in a separate process from the web server to ensure responsiveness and availability.  
 > Celery could easily scale workers count and workers can be distributed across multiple servers,
 > so this way the app can scale horizontally with request load.  
 > Alternative to polling for responses, Django channels and websockets could be used to stream responses to the client.
+
+# Run tests
+
+From the top level directory:
+
+```bash
+pytest
+```
 
 # Generate requirements files
 

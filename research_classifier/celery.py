@@ -1,5 +1,6 @@
 import os
 from celery import Celery
+from datetime import timedelta
 
 # Set the default Django settings module
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "research_classifier.settings")
@@ -12,3 +13,7 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 
 # Auto-discover tasks from all registered Django apps
 app.autodiscover_tasks()
+
+app.conf.update(
+    result_expires=timedelta(minutes=10),
+)
