@@ -1,3 +1,11 @@
+# Research Classifier
+
+This project is a web application for classifying research papers into multiple categories based on their abstracts.  
+The repo includes fine-tuning a pre-trained BERT bert-base-cased model based on the [ArXiv dataset from Kaggle](https://www.kaggle.com/datasets/Cornell-University/arxiv).  
+The problem is a multi-label classification problem with 176 original categories, 2635119 and significant class imbalance.  
+For the training I used Google Colab with a T4 GPU which connects to Google Drive for storage.  
+The notebook can be found in the [research_classifier.ipynb](research_classifier/training/research_classifier.ipynb) file.
+
 # Dataset analysis and decision records
 
 Refer to the [analysis.ipynb](research_classifier/analysis/analysis.ipynb) notebook for dataset analysis conducted, helpful visualizations, alternative approaches considered and decision chosen.
